@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.redknot.mimibo.weibo.Constants;
+import com.sina.weibo.sdk.auth.AuthInfo;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        AuthInfo mAuthInfo = new AuthInfo(this, Constants.APP_KEY,Constants.REDIRECT_URL, Constants.SCOPE);
     }
 
     @Override
