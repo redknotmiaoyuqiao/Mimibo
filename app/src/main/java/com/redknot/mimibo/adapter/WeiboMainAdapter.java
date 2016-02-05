@@ -112,6 +112,8 @@ public class WeiboMainAdapter extends BaseAdapter {
             LinearLayout retweeted_pic_line2 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line2);
             LinearLayout retweeted_pic_line3 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line3);
 
+            
+
 
             retweeted_pic_line1.setVisibility(View.GONE);
             retweeted_pic_line3.setVisibility(View.GONE);
