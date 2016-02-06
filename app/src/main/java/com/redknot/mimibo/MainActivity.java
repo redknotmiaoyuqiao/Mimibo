@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         weibo_main_listview.setAdapter(weiboMainAdapter);
         weibo_main_refresh.setOnRefreshListener(new MyOnRefreshListener());
+        weibo_main_listview.setOnScrollListener(new MyOnScrollListener());
     }
 
     private class MyOnRefreshListener implements SwipeRefreshLayout.OnRefreshListener {
@@ -87,6 +89,18 @@ public class MainActivity extends AppCompatActivity {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Url.friends_timeline + Url.parameterToString(parameter), new Listener(), new ErrorListener());
         mQueue.add(stringRequest);
+    }
+
+    private class MyOnScrollListener implements AbsListView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if (totalItemCount - 1 <= firstVisibleItem + visibleItemCount) {
+                
+            }
+        }
     }
 
     private class Listener implements Response.Listener<String> {
