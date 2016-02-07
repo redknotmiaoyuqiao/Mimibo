@@ -19,16 +19,54 @@ public class User {
     public User(JSONObject jo){
         try {
             this.idstr = jo.getString("idstr");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.screen_name = jo.getString("screen_name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.name = jo.getString("name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            this.name = "";
+        }
+
+        try {
             this.province = jo.getString("province");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.city = jo.getString("city");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.location = jo.getString("location");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.avatar_large = jo.getString("avatar_large");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
             this.avatar_hd = jo.getString("avatar_hd");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
     }
 
     public String getIdstr() {
@@ -48,7 +86,14 @@ public class User {
     }
 
     public String getName() {
-        return name;
+
+        if(name == null){
+            return "";
+        }
+        else{
+            return name;
+        }
+
     }
 
     public void setName(String name) {

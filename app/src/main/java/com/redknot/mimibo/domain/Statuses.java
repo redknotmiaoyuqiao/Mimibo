@@ -21,6 +21,8 @@ public class Statuses {
     private Statuses retweeted = null;
 
     public Statuses(JSONObject jo) {
+
+        pic_urls = new ArrayList<>();
         try {
             this.created_at = jo.getString("created_at");
             this.idstr = jo.getString("idstr");
@@ -29,7 +31,7 @@ public class Statuses {
 
             this.user = new User(jo.getJSONObject("user"));
 
-            pic_urls = new ArrayList<>();
+
 
             JSONArray pic_arr = jo.getJSONArray("pic_urls");
             for (int i = 0; i < pic_arr.length(); i++) {

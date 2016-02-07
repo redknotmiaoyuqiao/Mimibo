@@ -106,13 +106,15 @@ public class WeiboMainAdapter extends BaseAdapter {
 
             TextView retweeted_text = (TextView) view.findViewById(R.id.retweeted_text);
 
-            retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
+            try {
+                retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
+            } catch (Exception e) {
+
+            }
 
             LinearLayout retweeted_pic_line1 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line1);
             LinearLayout retweeted_pic_line2 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line2);
             LinearLayout retweeted_pic_line3 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line3);
-
-            
 
 
             retweeted_pic_line1.setVisibility(View.GONE);
@@ -145,7 +147,7 @@ public class WeiboMainAdapter extends BaseAdapter {
                     retweeted_pic_line3.addView(image);
                 }
             }
-        }else{
+        } else {
             view.findViewById(R.id.retweeted).setVisibility(View.GONE);
         }
 
