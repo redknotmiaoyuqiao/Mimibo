@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("abc",firstVisibleItem + "");
                 if(!isLoading){
                     getTimeLine(20, page,false);
+
+                    
                 }
             }
         }
