@@ -64,6 +64,7 @@ public class WeiboMainAdapter extends BaseAdapter {
 
         ViewHolder holder = null;
 
+        
         if (convertView == null) {
             convertView = this.mInflater.inflate(R.layout.listview_main_weibo, null);
             holder = new ViewHolder();
