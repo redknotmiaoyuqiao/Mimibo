@@ -1,6 +1,7 @@
 package com.redknot.mimibo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -17,8 +18,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.redknot.mimibo.ImageShowActivity;
 import com.redknot.mimibo.R;
 import com.redknot.mimibo.domain.Statuses;
 import com.redknot.mimibo.view.NetImageView;
@@ -69,17 +73,17 @@ public class WeiboMainAdapter extends BaseAdapter {
             holder.status_created_at = (TextView) convertView.findViewById(R.id.status_created_at);
             holder.status_text = (TextView) convertView.findViewById(R.id.status_text);
 
-            holder.pic_line1 = (LinearLayout) convertView.findViewById(R.id.pic_line1);
-            holder.pic_line2 = (LinearLayout) convertView.findViewById(R.id.pic_line2);
-            holder.pic_line3 = (LinearLayout) convertView.findViewById(R.id.pic_line3);
+            holder.pic_line1 = (LinearLayout)convertView.findViewById(R.id.pic_line1);
+            holder.pic_line2 = (LinearLayout)convertView.findViewById(R.id.pic_line2);
+            holder.pic_line3 = (LinearLayout)convertView.findViewById(R.id.pic_line3);
 
             holder.retweeted = convertView.findViewById(R.id.retweeted);
 
             holder.retweeted_text = (TextView) convertView.findViewById(R.id.retweeted_text);
 
-            holder. retweeted_pic_line1 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line1);
-            holder. retweeted_pic_line2 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line2);
-            holder. retweeted_pic_line3 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line3);
+            holder.retweeted_pic_line1 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line1);
+            holder.retweeted_pic_line2 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line2);
+            holder.retweeted_pic_line3 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line3);
 
             convertView.setTag(holder);
         } else {
@@ -88,12 +92,14 @@ public class WeiboMainAdapter extends BaseAdapter {
 
         Statuses statuses = this.statusesList.get(position);
 
-        holder.status_user_img.setIsRounded(true);
+        //holder.status_user_img.setIsRounded(true);
         holder.status_user_img.setUrl(statuses.getUser().getAvatar_hd());
 
         holder.status_user_name.setText(statuses.getUser().getName());
         holder.status_created_at.setText(statuses.getCreated_at());
         holder.status_text.setText(statuses.getText());
+
+        int img = 300;
 
         holder.pic_line1.setVisibility(View.GONE);
         holder.pic_line1.removeAllViews();
@@ -102,20 +108,27 @@ public class WeiboMainAdapter extends BaseAdapter {
         holder.pic_line3.setVisibility(View.GONE);
         holder.pic_line3.removeAllViews();
 
-
         for (int i = 0; i < statuses.getPic_urls().size(); i++) {
-            Log.e("miaoyuqiao", statuses.getPic_urls().get(i));
+
             String pic_url = statuses.getPic_urls().get(i);
             NetImageView image = new NetImageView(this.context);
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(5, 5, 5, 5);
-            lp.width = 240;
-            lp.height = 240;
+            lp.width = img;
+            lp.height = img;
             image.setLayoutParams(lp);
 
             image.setUrl(pic_url);
+
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(WeiboMainAdapter.this.context, ImageShowActivity.class);
+                    WeiboMainAdapter.this.context.startActivity(intent);
+                }
+            });
 
             if (i < 3) {
                 holder.pic_line1.setVisibility(View.VISIBLE);
@@ -136,7 +149,11 @@ public class WeiboMainAdapter extends BaseAdapter {
 
             holder.retweeted.setVisibility(View.VISIBLE);
 
-            holder.retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
+            try {
+                holder.retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
+            }catch (Exception e){
+
+            }
 
             holder.retweeted_pic_line1.setVisibility(View.GONE);
             holder.retweeted_pic_line1.removeAllViews();
@@ -151,12 +168,20 @@ public class WeiboMainAdapter extends BaseAdapter {
 
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(5, 5, 5, 5);
-                lp.width = 240;
-                lp.height = 240;
+                lp.width = img;
+                lp.height = img;
                 image.setLayoutParams(lp);
                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                 image.setUrl(pic_url);
+
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(WeiboMainAdapter.this.context, ImageShowActivity.class);
+                        WeiboMainAdapter.this.context.startActivity(intent);
+                    }
+                });
 
                 if (i < 3) {
                     holder.retweeted_pic_line1.setVisibility(View.VISIBLE);
