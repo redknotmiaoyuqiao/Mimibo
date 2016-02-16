@@ -1,6 +1,13 @@
 package com.redknot.mimibo.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,34 +57,57 @@ public class WeiboMainAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = this.mInflater.inflate(R.layout.listview_main_weibo, null);
+
+        ViewHolder holder = null;
+
+        if (convertView == null) {
+            convertView = this.mInflater.inflate(R.layout.listview_main_weibo, null);
+            holder = new ViewHolder();
+
+            holder.status_user_img = (NetImageView) convertView.findViewById(R.id.status_user_img);
+            holder.status_user_name = (TextView) convertView.findViewById(R.id.status_user_name);
+            holder.status_created_at = (TextView) convertView.findViewById(R.id.status_created_at);
+            holder.status_text = (TextView) convertView.findViewById(R.id.status_text);
+
+            holder.pic_line1 = (LinearLayout) convertView.findViewById(R.id.pic_line1);
+            holder.pic_line2 = (LinearLayout) convertView.findViewById(R.id.pic_line2);
+            holder.pic_line3 = (LinearLayout) convertView.findViewById(R.id.pic_line3);
+
+            holder.retweeted = convertView.findViewById(R.id.retweeted);
+
+            holder.retweeted_text = (TextView) convertView.findViewById(R.id.retweeted_text);
+
+            holder. retweeted_pic_line1 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line1);
+            holder. retweeted_pic_line2 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line2);
+            holder. retweeted_pic_line3 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line3);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         Statuses statuses = this.statusesList.get(position);
 
-        NetImageView status_user_img = (NetImageView) view.findViewById(R.id.status_user_img);
-        TextView status_user_name = (TextView) view.findViewById(R.id.status_user_name);
-        TextView status_created_at = (TextView) view.findViewById(R.id.status_created_at);
-        TextView status_text = (TextView) view.findViewById(R.id.status_text);
+        holder.status_user_img.setIsRounded(true);
+        holder.status_user_img.setUrl(statuses.getUser().getAvatar_hd());
 
-        status_user_img.setUrl(statuses.getUser().getAvatar_hd());
-        status_user_name.setText(statuses.getUser().getName());
-        status_created_at.setText(statuses.getCreated_at());
-        status_text.setText(statuses.getText());
+        holder.status_user_name.setText(statuses.getUser().getName());
+        holder.status_created_at.setText(statuses.getCreated_at());
+        holder.status_text.setText(statuses.getText());
 
-        LinearLayout pic_line1 = (LinearLayout) view.findViewById(R.id.pic_line1);
-        LinearLayout pic_line2 = (LinearLayout) view.findViewById(R.id.pic_line2);
-        LinearLayout pic_line3 = (LinearLayout) view.findViewById(R.id.pic_line3);
-
-
-        pic_line1.setVisibility(View.GONE);
-        pic_line3.setVisibility(View.GONE);
-        pic_line3.setVisibility(View.GONE);
+        holder.pic_line1.setVisibility(View.GONE);
+        holder.pic_line1.removeAllViews();
+        holder.pic_line2.setVisibility(View.GONE);
+        holder.pic_line2.removeAllViews();
+        holder.pic_line3.setVisibility(View.GONE);
+        holder.pic_line3.removeAllViews();
 
 
         for (int i = 0; i < statuses.getPic_urls().size(); i++) {
+            Log.e("miaoyuqiao", statuses.getPic_urls().get(i));
             String pic_url = statuses.getPic_urls().get(i);
             NetImageView image = new NetImageView(this.context);
-            image.setScaleType(ImageView.ScaleType.FIT_XY);
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(5, 5, 5, 5);
@@ -88,69 +118,84 @@ public class WeiboMainAdapter extends BaseAdapter {
             image.setUrl(pic_url);
 
             if (i < 3) {
-                pic_line1.setVisibility(View.VISIBLE);
-                pic_line1.addView(image);
+                holder.pic_line1.setVisibility(View.VISIBLE);
+                holder.pic_line1.addView(image);
             }
             if (i < 6 && i >= 3) {
-                pic_line2.setVisibility(View.VISIBLE);
-                pic_line2.addView(image);
+                holder.pic_line2.setVisibility(View.VISIBLE);
+                holder.pic_line2.addView(image);
             }
             if (i < 9 && i >= 6) {
-                pic_line3.setVisibility(View.VISIBLE);
-                pic_line3.addView(image);
+                holder.pic_line3.setVisibility(View.VISIBLE);
+                holder.pic_line3.addView(image);
             }
         }
 
         if (statuses.getRetweeted() != null) {
             Statuses retweeted = statuses.getRetweeted();
 
-            TextView retweeted_text = (TextView) view.findViewById(R.id.retweeted_text);
+            holder.retweeted.setVisibility(View.VISIBLE);
 
-            try {
-                retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
-            } catch (Exception e) {
+            holder.retweeted_text.setText(retweeted.getUser().getName() + ":" + retweeted.getText());
 
-            }
-
-            LinearLayout retweeted_pic_line1 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line1);
-            LinearLayout retweeted_pic_line2 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line2);
-            LinearLayout retweeted_pic_line3 = (LinearLayout) view.findViewById(R.id.retweeted_pic_line3);
-
-
-            retweeted_pic_line1.setVisibility(View.GONE);
-            retweeted_pic_line3.setVisibility(View.GONE);
-            retweeted_pic_line3.setVisibility(View.GONE);
+            holder.retweeted_pic_line1.setVisibility(View.GONE);
+            holder.retweeted_pic_line1.removeAllViews();
+            holder.retweeted_pic_line3.setVisibility(View.GONE);
+            holder.retweeted_pic_line2.removeAllViews();
+            holder.retweeted_pic_line3.setVisibility(View.GONE);
+            holder.retweeted_pic_line3.removeAllViews();
 
             for (int i = 0; i < retweeted.getPic_urls().size(); i++) {
                 String pic_url = retweeted.getPic_urls().get(i);
                 NetImageView image = new NetImageView(this.context);
-                image.setScaleType(ImageView.ScaleType.FIT_XY);
 
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 lp.setMargins(5, 5, 5, 5);
                 lp.width = 240;
                 lp.height = 240;
                 image.setLayoutParams(lp);
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                 image.setUrl(pic_url);
 
                 if (i < 3) {
-                    retweeted_pic_line1.setVisibility(View.VISIBLE);
-                    retweeted_pic_line1.addView(image);
+                    holder.retweeted_pic_line1.setVisibility(View.VISIBLE);
+                    holder.retweeted_pic_line1.addView(image);
                 }
                 if (i < 6 && i >= 3) {
-                    retweeted_pic_line2.setVisibility(View.VISIBLE);
-                    retweeted_pic_line2.addView(image);
+                    holder.retweeted_pic_line2.setVisibility(View.VISIBLE);
+                    holder.retweeted_pic_line2.addView(image);
                 }
                 if (i < 9 && i >= 6) {
-                    retweeted_pic_line3.setVisibility(View.VISIBLE);
-                    retweeted_pic_line3.addView(image);
+                    holder.retweeted_pic_line3.setVisibility(View.VISIBLE);
+                    holder.retweeted_pic_line3.addView(image);
                 }
             }
         } else {
-            view.findViewById(R.id.retweeted).setVisibility(View.GONE);
+            holder.retweeted.setVisibility(View.GONE);
         }
 
-        return view;
+        return convertView;
+
+
+    }
+
+    public static class ViewHolder {
+        NetImageView status_user_img;
+        TextView status_user_name;
+        TextView status_created_at;
+        TextView status_text;
+
+        LinearLayout pic_line1;
+        LinearLayout pic_line2;
+        LinearLayout pic_line3;
+
+        View retweeted;
+
+        TextView retweeted_text;
+
+        LinearLayout retweeted_pic_line1;
+        LinearLayout retweeted_pic_line2;
+        LinearLayout retweeted_pic_line3;
     }
 }

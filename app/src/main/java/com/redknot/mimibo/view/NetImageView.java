@@ -3,6 +3,12 @@ package com.redknot.mimibo.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -26,6 +32,8 @@ public class NetImageView extends ImageView {
     private Context context;
     private static LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(100);
 
+    private boolean isRounded = false;
+
     public NetImageView(Context context) {
         super(context);
         this.context = context;
@@ -44,6 +52,10 @@ public class NetImageView extends ImageView {
         //this.setImageResource(R.drawable.user_icon);
     }
 
+    public void setIsRounded(boolean isRounded){
+        this.isRounded = isRounded;
+    }
+
     public void setUrl(String url) {
         Bitmap bitmap = mCache.get(MD5.MD5(url));
         if (bitmap == null) {
@@ -54,9 +66,9 @@ public class NetImageView extends ImageView {
             ImageRequest imageRequest = new ImageRequest(
                     url,
                     new Listener(url),
-                    500,
-                    500,
-                    Bitmap.Config.RGB_565,
+                    0,
+                    0,
+                    Bitmap.Config.ARGB_8888,
                     new ErrorListener()
             );
             requestQueue.add(imageRequest);
@@ -101,9 +113,15 @@ public class NetImageView extends ImageView {
 
         @Override
         public void onResponse(Object response) {
-            NetImageView.this.setImageBitmap((Bitmap) response);
-            mCache.put(MD5.MD5(this.url), (Bitmap) response);
-            saveImage(this.url, (Bitmap) response);
+            Bitmap bitmap = (Bitmap) response;
+
+            if(isRounded){
+                bitmap = getRoundedCornerBitmap(bitmap);
+            }
+
+            NetImageView.this.setImageBitmap(bitmap);
+            mCache.put(MD5.MD5(this.url), bitmap);
+            saveImage(this.url, bitmap);
         }
     }
 
@@ -113,5 +131,39 @@ public class NetImageView extends ImageView {
             //NetImageView.this.setImageResource(R.drawable.load_photo_fail);
             //NetImageView.this.setImageResource(R.drawable.user_icon);
         }
+    }
+
+    private Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final Paint paint = new Paint();
+        //保证是方形，并且从中心画
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int w;
+        int deltaX = 0;
+        int deltaY = 0;
+        if (width <= height) {
+            w = width;
+            deltaY = height - w;
+        } else {
+            w = height;
+            deltaX = width - w;
+        }
+        final Rect rect = new Rect(deltaX, deltaY, w, w);
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        //圆形，所有只用一个
+
+        int radius = (int) (Math.sqrt(w * w * 2.0d) / 2);
+        canvas.drawRoundRect(rectF, radius, radius, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
     }
 }
