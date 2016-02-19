@@ -82,6 +82,8 @@ public class WeiboMainAdapter extends BaseAdapter {
 
             holder.retweeted_text = (TextView) convertView.findViewById(R.id.retweeted_text);
 
+            
+
             holder.retweeted_pic_line1 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line1);
             holder.retweeted_pic_line2 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line2);
             holder.retweeted_pic_line3 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line3);
