@@ -82,7 +82,7 @@ public class WeiboMainAdapter extends BaseAdapter {
 
             holder.retweeted_text = (TextView) convertView.findViewById(R.id.retweeted_text);
 
-            
+
 
             holder.retweeted_pic_line1 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line1);
             holder.retweeted_pic_line2 = (LinearLayout) convertView.findViewById(R.id.retweeted_pic_line2);
@@ -92,6 +92,8 @@ public class WeiboMainAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        //abc
 
         Statuses statuses = this.statusesList.get(position);
 
